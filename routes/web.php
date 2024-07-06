@@ -16,9 +16,3 @@ use App\Http\Controllers\APIController;
 */
 
 Route::get('/', [HomeController::class, 'index']);
-
-Route::get('/api/github-projects', [APIController::class, 'fetchGitHubProjects']);
-Route::get('/api/last-commit-title', [APIController::class, 'fetchLastCommitTitle']);
-Route::get('/api/discord-status', [APIController::class, 'fetchDiscordStatus']);
-Route::get('/api/anime-recommendations', [APIController::class, 'fetchAnimeRecommendations']);
-Route::get('/api/waifu-image', [APIController::class, 'fetchWaifuImage']);

@@ -25,7 +25,11 @@ class HomeController extends Controller
         $dcresponse = Http::get("https://api.lanyard.rest/v1/users/{$discordUserId}");
         $data = $dcresponse->json();
 
-        return view('welcome', compact('projects', 'data'));
+        $commitresponse = Http::get("https://api.github.com/repos/ItzApipAjalah/portofolio-laravel/commits");
+        $commit = $commitresponse->json();
+        $lastCommitTitle = $commit[0]['commit']['message'] ?? 'No recent changes found';
+
+        return view('home', compact('projects', 'data', 'lastCommitTitle'));
 
 
     }

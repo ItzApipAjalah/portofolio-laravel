@@ -131,7 +131,7 @@
             <div id="discord">
                 <div class="content">
                     <div class="icon">
-                        <img src="../src/image/ppdc.gif" alt="avatar" draggable="false">
+                        <img src="{{ 'https://api.lanyard.rest/' . $data['data']['discord_user']['id'] . '.jpg' }}" alt="avatar" draggable="false">
                     </div>
                     <div class="meta">
                         <b id="name">{{ $data['data']['discord_user']['username'] }}</b>
@@ -146,7 +146,7 @@
                                 @endswitch
                             "></span>
                             <span id="status">{{ $data['data']['discord_status'] }}</span>
-                            <b id="activity">{{ $data['data']['activities'][0]['name'] ?? '' }}</b>
+                            {{-- <b id="activity">{{ $data['data']['activities'][0]['name'] ?? '' }}</b> --}}
                         </p>
                     </div>
                 </div>
@@ -159,22 +159,33 @@
                                 @php
                                     $activityName = $data['data']['activities'][0]['name'] ?? '';
                                     $imageUrl = '';
-                                    switch ($activityName) {
-                                        case 'Visual Studio Code':
-                                            $imageUrl = 'https://cdn.thenewstack.io/media/2021/10/4f0ac3e0-visual_studio_code.png';
-                                            break;
-                                        case 'VALORANT':
-                                            $imageUrl = 'https://seeklogo.com/images/V/valorant-logo-FAB2CA0E55-seeklogo.com.png';
-                                            break;
-                                        case 'Roblox':
-                                            $imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/4/48/Roblox_Logo_2021.png';
-                                            break;
-                                        case 'Palworld':
-                                            $imageUrl = 'https://pwmodding.wiki/ru/img/palworld.png';
-                                            break;
-                                        default:
-                                            $imageUrl = '';
-                                            break;
+
+                                    // Prioritizing YouTube Music
+                                    if ($activityName == 'YouTube Music') {
+                                        $rawImageUrl = $data['data']['activities'][0]['assets']['large_image'] ?? '';
+                                        if (strpos($rawImageUrl, 'i.ytimg.com') !== false) {
+                                            $imageUrl = 'https://i.ytimg.com/' . explode('i.ytimg.com/', $rawImageUrl)[1];
+                                        } elseif (strpos($rawImageUrl, 'lh3.googleusercontent.com') !== false) {
+                                            $imageUrl = 'https://lh3.googleusercontent.com/' . explode('lh3.googleusercontent.com/', $rawImageUrl)[1];
+                                        }
+                                    } else {
+                                        switch ($activityName) {
+                                            case 'Visual Studio Code':
+                                                $imageUrl = 'https://cdn.thenewstack.io/media/2021/10/4f0ac3e0-visual_studio_code.png';
+                                                break;
+                                            case 'VALORANT':
+                                                $imageUrl = 'https://seeklogo.com/images/V/valorant-logo-FAB2CA0E55-seeklogo.com.png';
+                                                break;
+                                            case 'Roblox':
+                                                $imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/4/48/Roblox_Logo_2021.png';
+                                                break;
+                                            case 'Palworld':
+                                                $imageUrl = 'https://pwmodding.wiki/ru/img/palworld.png';
+                                                break;
+                                            default:
+                                                $imageUrl = '';
+                                                break;
+                                        }
                                     }
                                 @endphp
                                 @if($imageUrl)
@@ -188,24 +199,36 @@
                         <div id="details">
                             @if($data['data']['listening_to_spotify'])
                                 {{ "Listening To " . $data['data']['spotify']['song'] }}
+                            @elseif($activityName == 'YouTube Music')
+                                {{ "Listening To " . ($data['data']['activities'][0]['details'] ?? '') }}
                             @else
-                                {{ $data['data']['activities'][0]['name'] ?? '' }}
+                                {{ $activityName }}
                             @endif
                         </div>
                         <div id="details2">
                             @if($data['data']['listening_to_spotify'])
                                 {{ "By " . $data['data']['spotify']['artist'] }}
+                            @elseif($activityName == 'YouTube Music')
+                                {{ $data['data']['activities'][0]['state'] ?? '' }}
                             @else
                                 {{ $data['data']['activities'][0]['state'] ?? '' }}
                             @endif
                         </div>
                         <div id="timestamp">
-                            {{ $data['data']['activities'][0]['details'] ?? '' }}
+                            @php
+                                $startTimestamp = $data['data']['activities'][0]['timestamps']['start'] ?? 0;
+                                $endTimestamp = $data['data']['activities'][0]['timestamps']['end'] ?? 0;
+                            @endphp
+                            <span id="time_elapsed"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+
         <div class="widget" style="--columns: 4; --rows: 1;">
             <!-- Tautan dengan event listener -->
             <a id="showImage">
@@ -247,7 +270,7 @@
                     </div>
                     <div class="meta">
                         <b>Last Deploy</b>
-                        <p id="deploy-info"></p>
+                        <p id="deploy-info">{{ $lastCommitTitle }}</p>
                     </div>
                 </div>
             </a>
@@ -271,7 +294,7 @@
             <!-- <div class="widget" style="--columns: 4; --rows: 6; --m-columns: 4; --m-rows: 6;">
                 <div id="animeList" ></div>
             </div> -->
-            <div id="gachaWidget" class="widget" style="--columns: 4; --rows: 1;">
+            {{-- <div id="gachaWidget" class="widget" style="--columns: 4; --rows: 1;">
                 <a href="#" onclick="showWaifu()">
                     <div class="content">
                         <div class="icon" style="background-color: #48d; --size: 60%;">
@@ -283,7 +306,7 @@
                         </div>
                     </div>
                 </a>
-            </div>
+            </div> --}}
 
 
 
@@ -314,4 +337,37 @@
 @endsection
 
 @push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var startTimestamp = {{ $startTimestamp }};
+        var endTimestamp = {{ $endTimestamp }};
+        var timeElapsedElement = document.getElementById("time_elapsed");
+
+        function updateTimeElapsed() {
+            var now = Date.now();
+            var timeElapsed = now - startTimestamp;
+
+            // Calculate hours, minutes, and seconds
+            var hours = Math.floor((timeElapsed / (1000 * 60 * 60)) % 24);
+            var minutes = Math.floor((timeElapsed / (1000 * 60)) % 60);
+            var seconds = Math.floor((timeElapsed / 1000) % 60);
+
+            // Format the time string
+            var timeString =
+                (hours < 10 ? "0" : "") + hours + ":" +
+                (minutes < 10 ? "0" : "") + minutes + ":" +
+                (seconds < 10 ? "0" : "") + seconds;
+
+            timeElapsedElement.textContent = timeString;
+
+            // Update every second
+            setTimeout(updateTimeElapsed, 1000);
+        }
+
+        // Initialize the time update
+        if (startTimestamp > 0) {
+            updateTimeElapsed();
+        }
+    });
+</script>
 @endpush

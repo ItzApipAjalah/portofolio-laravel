@@ -10,7 +10,7 @@ class APIController extends Controller
 {
     private $githubUsername = 'ItzApipAjalah';
     private $discordUserId = '481734993622728715';
-    private $portfolioRepo = 'ItzApipAjalah/portofolio';
+    private $portfolioRepo = 'ItzApipAjalah/portofolio-laravel';
 
 
 
@@ -63,9 +63,11 @@ class APIController extends Controller
         try {
             $response = Http::get('https://api.waifu.pics/sfw/waifu');
             $data = $response->json();
-            return response()->json($data);
+            return response()->json(['url' => $data['url']]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching waifu image'], 500);
         }
     }
+
+
 }

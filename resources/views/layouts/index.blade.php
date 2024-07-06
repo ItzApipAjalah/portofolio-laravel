@@ -7,7 +7,6 @@
         <link rel="icon" type="image/x-icon" href="../src/image/favicon.ico">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-        <script async src="https://arc.io/widget.min.js#xkb6JnRq"></script>
 
         <!-- PDF.js CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.css">
@@ -38,7 +37,7 @@
 
                 </h1>
                 <p>Halo, nama saya Afif Medya Wishnu, Saya seorang pelajar berumur 17 tahun yang tengah menempuh pendidikan di SMK Taruna Bhakti, khususnya di jurusan pemrograman perangkat lunak dan gim.</p>
-                <button id="cv">CV Saya</button>
+                {{-- <button id="cv">CV Saya</button> --}}
             </section>
         </header>
 
