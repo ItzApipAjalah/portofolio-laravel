@@ -92,12 +92,12 @@ window.addEventListener('scroll', function() {
 document.addEventListener("DOMContentLoaded", function() {
   toastr.options.progressBar = true;
 
-  let isAndroid = /Android/i.test(navigator.userAgent);
-  let message = isAndroid ? 'Tekan 2 kali menggunakan 2 jari untuk Mengganti gambar neko <3' : 'Tekan 2 Mengganti gambar neko <3';
+//   let isAndroid = /Android/i.test(navigator.userAgent);
+//   let message = isAndroid ? 'Tekan 2 kali menggunakan 2 jari untuk Mengganti gambar neko <3' : 'Tekan 2 Mengganti gambar neko <3';
 
-  toastr.info(message, '', {
-      timeOut: 5000
-  });
+//   toastr.info(message, '', {
+//       timeOut: 5000
+//   });
 
   toastr.info('Tekan 1 Untuk Menyalakan/Mematikan Music', '', {
       timeOut: 5000

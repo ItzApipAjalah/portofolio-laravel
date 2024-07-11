@@ -14,9 +14,7 @@ class HomeController extends Controller
         $response = Http::get("https://api.github.com/users/{$username}/repos");
         $projects = $response->json();
 
-        usort($projects, function ($a, $b) {
-            return strtotime($b['updated_at']) - strtotime($a['updated_at']);
-        });
+
 
         $projects = array_slice($projects, 0, 5);
 
