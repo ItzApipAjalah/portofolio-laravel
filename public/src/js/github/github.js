@@ -6,7 +6,7 @@ async function fetchGitHubProjects(username) {
     try {
         const response = await fetch(`https://api.github.com/users/${username}/repos`);
         const data = await response.json();
-        
+
         if (data.message && data.message.includes("API rate limit exceeded")) {
             Swal.fire({
                 title: 'Rate Limit Exceeded',
@@ -88,7 +88,7 @@ function createProjectElement(project) {
 
 async function fetchLastCommitTitle() {
   try {
-      const response = await fetch('https://api.github.com/repos/ItzApipAjalah/portofolio/commits');
+      const response = await fetch('https://api.github.com/repos/ItzApipAjalah/portofolio-laravel/commits');
       const data = await response.json();
       return data[0].commit.message;
   } catch (error) {
@@ -134,7 +134,7 @@ function compareProjects(newProjects, cachedProjects) {
     if (newProjects.length !== cachedProjects.length) return true;
 
     for (let i = 0; i < newProjects.length; i++) {
-        if (newProjects[i].id !== cachedProjects[i].id || 
+        if (newProjects[i].id !== cachedProjects[i].id ||
             newProjects[i].updated_at !== cachedProjects[i].updated_at) {
             return true;
         }

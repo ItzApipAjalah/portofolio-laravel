@@ -4,12 +4,30 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-
+use App\Models\Visitor;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $ip = $request->ip();
+        $existingVisitor = Visitor::where('ip_address', $ip)->first();
+
+        if (!$existingVisitor) {
+            // Fetch country from IP
+            $response = Http::get('https://ipapi.co/' . $ip . '/json/');
+            $country = $response->json()['country_name'] ?? 'Unknown';
+
+            // Create new visitor
+            Visitor::create([
+                'ip_address' => $ip,
+                'country' => $country,
+            ]);
+        }
+
+        $visitorCount = Visitor::count();
+
+
         $username = "ItzApipAjalah";
         $response = Http::get("https://api.github.com/users/{$username}/repos");
         $projects = $response->json();
@@ -27,7 +45,7 @@ class HomeController extends Controller
         $commit = $commitresponse->json();
         $lastCommitTitle = $commit[0]['commit']['message'] ?? 'No recent changes found';
 
-        return view('home', compact('projects', 'data', 'lastCommitTitle'));
+        return view('home', compact('projects', 'data', 'lastCommitTitle', 'visitorCount'));
 
 
     }
