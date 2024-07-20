@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\InternetController;
 use App\Http\Controllers\VisitorController;
+use App\Http\Middleware\CheckVisitor;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,8 @@ use App\Http\Controllers\VisitorController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->middleware('check.visitor');
+
 Route::post('/visitor', [VisitorController::class, 'store']);
 Route::get('/visitor/count', [VisitorController::class, 'count']);
 Route::get('/error.php', function () {

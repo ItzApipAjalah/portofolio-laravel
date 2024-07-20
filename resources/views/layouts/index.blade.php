@@ -11,7 +11,25 @@
         <!-- PDF.js CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.css">
 
-
+        <script type="text/javascript">
+            function googleTranslateElementInit() {
+                var userLang = navigator.language || navigator.userLanguage;
+                var lang = userLang.split('-')[0]; // Mengambil kode bahasa
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,zh,ja,ko,ru,id', // List of languages you want to include
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                }, 'google_translate_element');
+                // Set bahasa secara otomatis
+                var translateElement = document.querySelector('.goog-te-combo');
+                if (translateElement) {
+                    translateElement.value = lang;
+                    translateElement.dispatchEvent(new Event('change'));
+                }
+            }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     </head>
     <body style="--scroll: 0;">
         <div id="bg"></div>
@@ -46,8 +64,9 @@
                 <path d="M112 184l144 144 144-144"></path>
             </svg>
         </div>
-
+        <div id="google_translate_element">
         @yield('content')
+        </div>
         <!-- <footer>
             <div>
                 <p><span>Search Anime</span> • <a href="https://myanimelist.net/anime.php">MyAnimeList</a></p>
@@ -64,6 +83,7 @@
 
 
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script defer="" src="../src/js/min.js"></script>
         <script defer="" src="../src/js/oneko.js"></script>
         <script defer="" src="../src/js/github/github.js"></script>

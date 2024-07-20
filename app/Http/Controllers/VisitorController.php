@@ -31,6 +31,22 @@ class VisitorController extends Controller
     public function count()
     {
         $visitorCount = Visitor::count();
-        return response()->json(['visitor_count' => $visitorCount]);
+        $visitorsByCountry = Visitor::select('country', \DB::raw('count(*) as total'))
+                                    ->groupBy('country')
+                                    ->get();
+
+        $countries = [];
+        foreach ($visitorsByCountry as $visitor) {
+            $countries[] = [
+                'country' => $visitor->country,
+                'total' => $visitor->total,
+                'percentage' => round(($visitor->total / $visitorCount) * 100, 2)
+            ];
+        }
+
+        return response()->json([
+            'visitor_count' => $visitorCount,
+            'countries' => $countries
+        ]);
     }
 }

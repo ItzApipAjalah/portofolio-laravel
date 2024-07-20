@@ -146,7 +146,6 @@
                                 @endswitch
                             "></span>
                             <span id="status">{{ $data['data']['discord_status'] }}</span>
-                            {{-- <b id="activity">{{ $data['data']['activities'][0]['name'] ?? '' }}</b> --}}
                         </p>
                     </div>
                 </div>
@@ -260,7 +259,34 @@
             </a>
         </div>
 
-        <div class="widget" style="--columns: 9; --rows: 1;">
+
+
+        <div class="widget" style="--columns: 4; --rows: 1;">
+            <a id="visitor-link">
+                <div class="content">
+                    <div class="icon" style="background-color: #48d; --size: 60%;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.134 2 5 5.134 5 9c0 2.837 1.686 5.257 4.109 6.426-.06.44-.109.888-.109 1.341 0 .713.091 1.404.254 2.066C6.111 17.794 2 14.193 2 9c0-5.523 4.477-10 10-10s10 4.477 10 10c0 5.193-4.111 8.794-7.254 10.832.163-.662.254-1.353.254-2.066 0-.453-.049-.901-.109-1.341C17.314 14.257 19 11.837 19 9c0-3.866-3.134-7-7-7zm-.905 19.986A2.004 2.004 0 0 1 11 20c0-.49.17-.96.476-1.333a11.114 11.114 0 0 1 1.048-.982C13.5 19.162 15.5 21.5 17 23c-.828 0-3.5-.682-5.905-1.014zM8.5 23c1.5-1.5 3.5-3.838 4.476-5.315.348.352.656.711.982 1.048A11.114 11.114 0 0 1 14 20c0 .71.332 1.405.905 1.986C13.5 23.682 10.828 24 8.5 23zM12 15c-1.102 0-2.216-.179-3.309-.5-.215.263-.45.514-.709.75C10.014 16.607 11 19 12 21c1-2 1.986-4.393 4.018-5.75-.259-.236-.494-.487-.709-.75A13.037 13.037 0 0 1 12 15z"/>
+                        </svg>
+                    </div>
+                    <div class="meta">
+                        <b>Total Visitors</b>
+                        <p id="visitor-count">{{ $visitorCount }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="widget" style="--columns: 4; --rows: 3;">
+            <a id="visitor-link">
+                <div class="content">
+
+                    <canvas id="visitorChart"></canvas>
+                </div>
+            </a>
+        </div>
+
+        {{-- <div class="widget" style="--columns: 9; --rows: 1;">
             <a id="deploy-link">
                 <div class="content">
                     <div class="icon" style="background-color: #48d; --size: 60%;">
@@ -274,24 +300,7 @@
                     </div>
                 </div>
             </a>
-        </div>
-
-        <div class="widget" style="--columns: 9; --rows: 1;">
-        <a id="visitor-link">
-            <div class="content">
-                <div class="icon" style="background-color: #48d; --size: 60%;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C8.134 2 5 5.134 5 9c0 2.837 1.686 5.257 4.109 6.426-.06.44-.109.888-.109 1.341 0 .713.091 1.404.254 2.066C6.111 17.794 2 14.193 2 9c0-5.523 4.477-10 10-10s10 4.477 10 10c0 5.193-4.111 8.794-7.254 10.832.163-.662.254-1.353.254-2.066 0-.453-.049-.901-.109-1.341C17.314 14.257 19 11.837 19 9c0-3.866-3.134-7-7-7zm-.905 19.986A2.004 2.004 0 0 1 11 20c0-.49.17-.96.476-1.333a11.114 11.114 0 0 1 1.048-.982C13.5 19.162 15.5 21.5 17 23c-.828 0-3.5-.682-5.905-1.014zM8.5 23c1.5-1.5 3.5-3.838 4.476-5.315.348.352.656.711.982 1.048A11.114 11.114 0 0 1 14 20c0 .71.332 1.405.905 1.986C13.5 23.682 10.828 24 8.5 23zM12 15c-1.102 0-2.216-.179-3.309-.5-.215.263-.45.514-.709.75C10.014 16.607 11 19 12 21c1-2 1.986-4.393 4.018-5.75-.259-.236-.494-.487-.709-.75A13.037 13.037 0 0 1 12 15z"/>
-                    </svg>
-                </div>
-                <div class="meta">
-                    <b>Total Visitors</b>
-                    <p id="visitor-count">{{ $visitorCount }}</p>
-                </div>
-            </div>
-        </a>
-    </div>
-
+        </div> --}}
             {{-- <div class="widget" style="--columns: 4; --rows: 1;">
                 <a href="chat/index">
                     <div class="content">
@@ -339,17 +348,19 @@
         var startTimestamp = {{ $startTimestamp }};
         var endTimestamp = {{ $endTimestamp }};
         var timeElapsedElement = document.getElementById("time_elapsed");
+        var hasRefreshedOnce = false;
 
         function updateTimeElapsed() {
             var now = Date.now();
             var timeElapsed = now - startTimestamp;
+            var timeRemaining = endTimestamp - now;
 
-            // Calculate hours, minutes, and seconds
+            // Calculate hours, minutes, and seconds for elapsed time
             var hours = Math.floor((timeElapsed / (1000 * 60 * 60)) % 24);
             var minutes = Math.floor((timeElapsed / (1000 * 60)) % 60);
             var seconds = Math.floor((timeElapsed / 1000) % 60);
 
-            // Format the time string
+            // Format the elapsed time string
             var timeString =
                 (hours < 10 ? "0" : "") + hours + ":" +
                 (minutes < 10 ? "0" : "") + minutes + ":" +
@@ -357,8 +368,20 @@
 
             timeElapsedElement.textContent = timeString;
 
-            // Update every second
-            setTimeout(updateTimeElapsed, 1000);
+            // Refresh the page if endTimestamp is reached for YouTube Music or Spotify
+            if (endTimestamp > 0 && timeRemaining <= 0) {
+                if (!hasRefreshedOnce) {
+                    hasRefreshedOnce = true;
+                    setTimeout(() => {
+                        location.reload();
+                    }, 4000);
+                } else {
+                    location.reload();
+                }
+            } else {
+                // Update every second
+                setTimeout(updateTimeElapsed, 1000);
+            }
         }
 
         // Initialize the time update
@@ -367,4 +390,69 @@
         }
     });
 </script>
+
+
+<script>
+    if (!localStorage.getItem('visitor_recorded')) {
+            localStorage.setItem('visitor_recorded', 'true');
+            // Trigger the backend logic to add a visitor
+            fetch('{{ url("/") }}');
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById('visitorChart').getContext('2d');
+            var visitorChart = new Chart(ctx, {
+                type: 'pie', // 'pie' or 'bar'
+                data: {
+                    labels: {!! json_encode($countries) !!},
+                    datasets: [{
+                        label: 'Visitors by Country',
+                        data: {!! json_encode($totals) !!},
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutBounce',
+                        animateRotate: true,
+                        animateScale: true
+                    }
+                }
+            });
+        });
+</script>
+
+
+
 @endpush
