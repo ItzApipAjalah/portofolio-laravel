@@ -6,12 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Visitor;
 use Illuminate\Support\Facades\Cookie;
+use App\Charts\SkillsChart;
 
 class HomeController extends Controller
 {
 
     private function getCountryFromIp($ip)
     {
+
+
         // Use ipapi.co as primary service
         $response = Http::get('https://ipapi.co/' . $ip . '/json/');
         if ($response->successful()) {
@@ -152,6 +155,8 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
+        $chart = new SkillsChart;
+
         $ip = $request->ip();
         $existingVisitor = Visitor::where('ip_address', $ip)->first();
 
@@ -201,7 +206,7 @@ class HomeController extends Controller
         $commit = $commitresponse->json();
         $lastCommitTitle = $commit[0]['commit']['message'] ?? 'No recent changes found';
 
-        return view('home', compact('projects', 'data', 'lastCommitTitle', 'visitorCount', 'countries', 'totals'));
+        return view('home', compact('projects', 'data', 'lastCommitTitle', 'visitorCount', 'countries', 'totals', 'chart'));
     }
 
     private function getStatusColor($status)
